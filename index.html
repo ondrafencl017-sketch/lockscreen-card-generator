@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lock Screen Business Card</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ground:   #111010;
+  --surface:  #1A1816;
+  --surface2: #222019;
+  --border:   #2F2C28;
+  --text:     #EAE6DF;
+  --muted:    #7A7368;
+  --accent:   #C8861E;
+  --accent-l: #E0991E;
+  --r: 8px;
+}
+
+html, body {
+  height: 100%;
+  background: var(--ground);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  overflow: hidden;
+}
+
+#app { display: flex; height: 100vh; }
+
+/* ── Sidebar ── */
+#sidebar {
+  width: 290px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.s-head {
+  padding: 22px 22px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.s-head h1 { font-size: 15px; font-weight: 600; letter-spacing: -.02em; }
+.s-head p  { margin-top: 3px; font-size: 11px; color: var(--muted); }
+
+.s-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.s-foot {
+  padding: 16px 22px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── Form ── */
+.group { display: flex; flex-direction: column; gap: 12px; }
+
+.glabel {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.glabel::before {
+  content: '';
+  display: block;
+  width: 2px; height: 11px;
+  background: var(--accent);
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field > span { font-size: 11px; font-weight: 500; color: var(--muted); }
+.field input[type=text],
+.field input[type=url] {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  padding: 8px 10px;
+  outline: none;
+  transition: border-color .15s;
+  width: 100%;
+}
+.field input:focus { border-color: var(--accent); }
+.field input::placeholder { color: #3D3933; }
+
+/* Logo */
+#logo-file { display: none; }
+#logo-area {
+  height: 68px;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--r);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--muted);
+  transition: border-color .15s, background .15s;
+}
+#logo-area:hover { border-color: var(--accent); background: rgba(200,134,30,.05); color: var(--accent); }
+#logo-prev { max-height: 48px; max-width: 200px; object-fit: contain; display: none; }
+#logo-rm {
+  background: none; border: none; cursor: pointer; padding: 0;
+  font-family: inherit; font-size: 11px; color: #d05050; display: none;
+}
+#logo-rm:hover { text-decoration: underline; }
+
+/* Themes */
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+.sw {
+  aspect-ratio: 1;
+  border-radius: 7px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform .15s, border-color .15s;
+  box-shadow: 0 1px 5px rgba(0,0,0,.5);
+}
+.sw:hover { transform: scale(1.12); }
+.sw.on {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2.5px rgba(200,134,30,.28), 0 1px 5px rgba(0,0,0,.5);
+}
+#t-lbl { font-size: 10px; color: var(--muted); text-align: center; margin-top: 5px; }
+
+/* Download */
+#dl {
+  width: 100%;
+  padding: 11px 16px;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--r);
+  color: #fff;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+}
+#dl:hover:not(:disabled) { background: var(--accent-l); }
+#dl:active:not(:disabled) { transform: scale(.98); }
+#dl:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ── Preview ── */
+#preview {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  padding: 32px;
+  position: relative;
+}
+#preview::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 55% 55% at 50% 54%, rgba(200,134,30,.07) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.pcaption {
+  margin-top: 16px; font-size: 11px; color: var(--muted);
+  letter-spacing: .03em; position: relative; z-index: 1;
+}
+
+/* ── Phone ── */
+.phone {
+  position: relative;
+  background: #1C1A18;
+  border-radius: 50px;
+  padding: 13px;
+  box-shadow:
+    0 0 0 1.5px #3A3630,
+    0 40px 100px rgba(0,0,0,.9),
+    0 0 50px rgba(200,134,30,.05),
+    inset 0 0 0 1px rgba(255,255,255,.03);
+  z-index: 1;
+}
+.phone::before {
+  content: '';
+  position: absolute; right: -3px; top: 112px;
+  width: 3px; height: 68px;
+  background: #2C2A26; border-radius: 0 3px 3px 0;
+  box-shadow: 0 84px 0 #2C2A26;
+}
+.phone::after {
+  content: '';
+  position: absolute; left: -3px; top: 94px;
+  width: 3px; height: 44px;
+  background: #2C2A26; border-radius: 3px 0 0 3px;
+  box-shadow: 0 58px 0 #2C2A26, 0 112px 0 #2C2A26;
+}
+.p-island {
+  position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
+  width: 86px; height: 26px; background: #000; border-radius: 14px; z-index: 10;
+}
+.p-screen { width: 262px; border-radius: 38px; overflow: hidden; }
+
+/* ── Lock screen ── */
+#ls {
+  width: 262px; height: 568px;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  transition: background .35s ease;
+}
+.ls-top {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 18px 6px; flex-shrink: 0; font-weight: 600;
+}
+.ls-clock { font-size: 13px; letter-spacing: .1px; }
+.ls-sig   { font-size: 9px; opacity: .75; letter-spacing: 1.5px; }
+
+.ls-mid {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 6px 20px 8px; gap: 12px;
+}
+.ls-logo-bg {
+  background: rgba(255,255,255,.12);
+  border-radius: 12px; padding: 6px 14px;
+  display: flex; align-items: center;
+}
+#c-logo { max-height: 34px; max-width: 110px; object-fit: contain; display: block; }
+
+.ls-text { text-align: center; display: flex; flex-direction: column; gap: 3px; }
+#c-name  { font-size: 22px; font-weight: 700; letter-spacing: -.04em; line-height: 1.12; }
+#c-job   { font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+#c-co    { font-size: 12px; opacity: .85; }
+
+.ls-qr   { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.qr-bg   { background: #fff; border-radius: 10px; padding: 7px; }
+#qr-box  { width: 108px; height: 108px; display: flex; align-items: center; justify-content: center; }
+#qr-box canvas, #qr-box img { display: block !important; }
+.qr-ph   { font-size: 9px; color: #bbb; text-align: center; line-height: 1.5; }
+#qr-lbl  { font-size: 9px; font-weight: 500; letter-spacing: .03em; }
+
+.ls-bot  { display: flex; justify-content: center; padding: 8px 0 12px; flex-shrink: 0; }
+.ls-pill { width: 88px; height: 4px; border-radius: 2px; opacity: .32; }
+
+/* ── Responsive ── */
+@media (max-width: 660px) {
+  html, body { overflow: auto; }
+  #app { flex-direction: column; height: auto; }
+  #sidebar { width: 100%; }
+  .s-body { max-height: 55vh; }
+  #preview { padding: 24px 16px 40px; overflow: visible; }
+}
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- Sidebar -->
+<aside id="sidebar">
+  <div class="s-head">
+    <h1>Lock Screen Card</h1>
+    <p>Digital business card for trade shows</p>
+  </div>
+  <div class="s-body">
+
+    <div class="group">
+      <div class="glabel">Contact</div>
+      <div class="field">
+        <span>Full name</span>
+        <input id="i-name" type="text" placeholder="Jan Novák" autocomplete="off" />
+      </div>
+      <div class="field">
+        <span>Job title</span>
+        <input id="i-job" type="text" placeholder="Sales Manager" autocomplete="off" />
+      </div>
+      <div class="field">
+        <span>Company</span>
+        <input id="i-co" type="text" placeholder="SMAUT Technology" autocomplete="off" />
+      </div>
+      <div class="field">
+        <span>LinkedIn URL</span>
+        <input id="i-li" type="url" placeholder="https://linkedin.com/in/username" autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="glabel">Logo</div>
+      <input type="file" id="logo-file" accept="image/*" />
+      <div id="logo-area" onclick="document.getElementById('logo-file').click()">
+        <img id="logo-prev" src="" alt="logo" />
+        <span id="logo-txt">Click to upload logo</span>
+      </div>
+      <button id="logo-rm" onclick="rmLogo()">Remove logo</button>
+    </div>
+
+    <div class="group">
+      <div class="glabel">Background</div>
+      <div class="swatches" id="sw"></div>
+      <div id="t-lbl">Midnight</div>
+    </div>
+
+  </div>
+  <div class="s-foot">
+    <button id="dl" onclick="doDownload()">&#8595;&nbsp;&nbsp;Download Lock Screen</button>
+  </div>
+</aside>
+
+<!-- Preview -->
+<main id="preview">
+  <div class="phone">
+    <div class="p-island"></div>
+    <div class="p-screen">
+      <div id="ls">
+        <div class="ls-top" id="ls-top">
+          <span class="ls-clock">9:41</span>
+          <span class="ls-sig">&#9646;&#9646;&#9646;&thinsp;&#9673;&thinsp;&#9644;&#9644;&#9644;</span>
+        </div>
+        <div class="ls-mid">
+          <div class="ls-logo-bg" id="ls-lb" style="display:none">
+            <img id="c-logo" src="" alt="logo" />
+          </div>
+          <div class="ls-text">
+            <div id="c-name">Your Name</div>
+            <div id="c-job">Job Title</div>
+            <div id="c-co">Company Name</div>
+          </div>
+          <div class="ls-qr">
+            <div class="qr-bg">
+              <div id="qr-box">
+                <div class="qr-ph">Enter<br>LinkedIn URL</div>
+              </div>
+            </div>
+            <div id="qr-lbl">Scan to connect on LinkedIn</div>
+          </div>
+        </div>
+        <div class="ls-bot">
+          <div class="ls-pill" id="ls-pill"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="pcaption">Set this image as your phone&rsquo;s lock screen at trade shows</p>
+</main>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+  integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSi2M8hV8APm7aXmKkPMEZiXHEV+x3I+PKsw=="
+  crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+  integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
+  crossorigin="anonymous"></script>
+<script>
+
+const THEMES = [
+  { id:'mid', name:'Midnight', bg:'linear-gradient(160deg,#0f0c29,#302b63,#24243e)', c:'#fff', a:'#a78bfa', s:'#94a3b8' },
+  { id:'sea', name:'Ocean',    bg:'linear-gradient(160deg,#0c1445,#1565c0,#0d47a1)', c:'#fff', a:'#7dd3fc', s:'#93c5fd' },
+  { id:'fst', name:'Forest',   bg:'linear-gradient(160deg,#052e16,#166534,#14532d)', c:'#fff', a:'#86efac', s:'#a7f3d0' },
+  { id:'emb', name:'Ember',    bg:'linear-gradient(160deg,#1c0605,#7f1d1d,#991b1b)', c:'#fff', a:'#fca5a5', s:'#fcd34d' },
+  { id:'slt', name:'Slate',    bg:'linear-gradient(160deg,#0f172a,#1e293b,#334155)', c:'#fff', a:'#94a3b8', s:'#cbd5e1' },
+  { id:'prl', name:'Pearl',    bg:'linear-gradient(160deg,#f8fafc,#e2e8f0,#f1f5f9)', c:'#0f172a', a:'#3b82f6', s:'#475569' },
+]
+let cur = THEMES[0], qrtmr = null
+
+const sw = document.getElementById('sw')
+THEMES.forEach((t, i) => {
+  const b = document.createElement('button')
+  b.className = 'sw' + (i === 0 ? ' on' : '')
+  b.style.background = t.bg
+  b.title = t.name
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.sw').forEach(x => x.classList.remove('on'))
+    b.classList.add('on')
+    cur = t
+    document.getElementById('t-lbl').textContent = t.name
+    paint()
+  })
+  sw.appendChild(b)
+})
+
+function paint() {
+  document.getElementById('ls').style.background   = cur.bg
+  document.getElementById('ls-top').style.color    = cur.c
+  document.getElementById('c-name').style.color    = cur.c
+  document.getElementById('c-job').style.color     = cur.a
+  document.getElementById('c-co').style.color      = cur.s
+  document.getElementById('qr-lbl').style.color    = cur.s
+  document.getElementById('ls-pill').style.background = cur.c
+}
+
+/* inputs */
+document.getElementById('i-name').addEventListener('input', e => {
+  document.getElementById('c-name').textContent = e.target.value || 'Your Name'
+})
+document.getElementById('i-job').addEventListener('input', e => {
+  document.getElementById('c-job').textContent = e.target.value || 'Job Title'
+})
+document.getElementById('i-co').addEventListener('input', e => {
+  document.getElementById('c-co').textContent = e.target.value || 'Company Name'
+})
+document.getElementById('i-li').addEventListener('input', e => {
+  clearTimeout(qrtmr)
+  qrtmr = setTimeout(() => buildQR(e.target.value.trim()), 550)
+})
+
+/* QR */
+function buildQR(url) {
+  const box = document.getElementById('qr-box')
+  box.innerHTML = ''
+  if (!url) { box.innerHTML = '<div class="qr-ph">Enter<br>LinkedIn URL</div>'; return }
+  new QRCode(box, {
+    text: url,
+    width: 108, height: 108,
+    colorDark: '#000000', colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M,
+  })
+}
+
+/* logo */
+document.getElementById('logo-file').addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f) return
+  const rd = new FileReader()
+  rd.onload = ev => {
+    const src = ev.target.result
+    document.getElementById('logo-prev').src = src; document.getElementById('logo-prev').style.display = 'block'
+    document.getElementById('logo-txt').style.display = 'none'
+    document.getElementById('logo-rm').style.display  = 'block'
+    document.getElementById('c-logo').src = src
+    document.getElementById('ls-lb').style.display = 'flex'
+  }
+  rd.readAsDataURL(f)
+})
+function rmLogo() {
+  document.getElementById('logo-prev').src = ''; document.getElementById('logo-prev').style.display='none'
+  document.getElementById('logo-txt').style.display='block'
+  document.getElementById('logo-rm').style.display='none'
+  document.getElementById('logo-file').value=''
+  document.getElementById('ls-lb').style.display='none'
+}
+
+/* download */
+async function doDownload() {
+  const btn = document.getElementById('dl')
+  btn.disabled = true; btn.textContent = 'Generating…'
+  try {
+    const el = document.getElementById('ls')
+    const canvas = await html2canvas(el, {
+      scale: 4, useCORS: true, allowTaint: true, backgroundColor: null, logging: false,
+    })
+    const name = (document.getElementById('i-name').value.trim() || 'business-card')
+      .toLowerCase().replace(/\s+/g, '-')
+    const a = document.createElement('a')
+    a.download = name + '-lock-screen.png'
+    a.href = canvas.toDataURL('image/png')
+    a.click()
+  } catch (err) {
+    console.error(err)
+    alert('Export failed. Please try again.')
+  } finally {
+    btn.disabled = false; btn.innerHTML = '&#8595;&nbsp;&nbsp;Download Lock Screen'
+  }
+}
+
+paint()
+</script>
+</body>
+</html>
