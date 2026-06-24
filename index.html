@@ -7,15 +7,16 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* SMAUT brand palette — #2D2927 dark / #5EDA9B primary green + SNT #7cc400 */
 :root {
-  --ground:   #111010;
-  --surface:  #1A1816;
-  --surface2: #222019;
-  --border:   #2F2C28;
+  --ground:   #1A1917;
+  --surface:  #2D2927;
+  --surface2: #3A3734;
+  --border:   #4A4744;
   --text:     #EAE6DF;
-  --muted:    #7A7368;
-  --accent:   #C8861E;
-  --accent-l: #E0991E;
+  --muted:    #8B8481;
+  --accent:   #5EDA9B;
+  --accent-l: #7FE8B0;
   --r: 8px;
 }
 
@@ -100,12 +101,12 @@ html, body {
   width: 100%;
 }
 .field input:focus { border-color: var(--accent); }
-.field input::placeholder { color: #3D3933; }
+.field input::placeholder { color: #5A5753; }
 
 /* Logo */
 #logo-file { display: none; }
 #logo-area {
-  height: 68px;
+  height: 80px;
   border: 1.5px dashed var(--border);
   border-radius: var(--r);
   cursor: pointer;
@@ -116,8 +117,8 @@ html, body {
   color: var(--muted);
   transition: border-color .15s, background .15s;
 }
-#logo-area:hover { border-color: var(--accent); background: rgba(200,134,30,.05); color: var(--accent); }
-#logo-prev { max-height: 48px; max-width: 200px; object-fit: contain; display: none; }
+#logo-area:hover { border-color: var(--accent); background: rgba(94,218,155,.06); color: var(--accent); }
+#logo-prev { max-height: 54px; max-width: 200px; object-fit: contain; display: none; }
 #logo-rm {
   background: none; border: none; cursor: pointer; padding: 0;
   font-family: inherit; font-size: 11px; color: #d05050; display: none;
@@ -141,25 +142,28 @@ html, body {
 .sw:hover { transform: scale(1.12); }
 .sw.on {
   border-color: var(--accent);
-  box-shadow: 0 0 0 2.5px rgba(200,134,30,.28), 0 1px 5px rgba(0,0,0,.5);
+  box-shadow: 0 0 0 2.5px rgba(94,218,155,.3), 0 1px 5px rgba(0,0,0,.5);
 }
 #t-lbl { font-size: 10px; color: var(--muted); text-align: center; margin-top: 5px; }
 
 /* Download */
 #dl {
   width: 100%;
-  padding: 11px 16px;
+  padding: 14px 16px;
   background: var(--accent);
   border: none;
   border-radius: var(--r);
-  color: #fff;
+  color: #1A1917;
   font-family: inherit;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: .06em;
-  text-transform: uppercase;
+  letter-spacing: .02em;
   cursor: pointer;
   transition: background .15s, transform .1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 #dl:hover:not(:disabled) { background: var(--accent-l); }
 #dl:active:not(:disabled) { transform: scale(.98); }
@@ -179,7 +183,7 @@ html, body {
 #preview::before {
   content: '';
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse 55% 55% at 50% 54%, rgba(200,134,30,.07) 0%, transparent 70%);
+  background: radial-gradient(ellipse 55% 55% at 50% 54%, rgba(94,218,155,.06) 0%, transparent 70%);
   pointer-events: none; z-index: 0;
 }
 .pcaption {
@@ -196,7 +200,7 @@ html, body {
   box-shadow:
     0 0 0 1.5px #3A3630,
     0 40px 100px rgba(0,0,0,.9),
-    0 0 50px rgba(200,134,30,.05),
+    0 0 50px rgba(94,218,155,.04),
     inset 0 0 0 1px rgba(255,255,255,.03);
   z-index: 1;
 }
@@ -227,39 +231,29 @@ html, body {
   overflow: hidden;
   transition: background .35s ease;
 }
-.ls-top {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 14px 18px 6px; flex-shrink: 0; font-weight: 600;
-}
-.ls-clock { font-size: 13px; letter-spacing: .1px; }
-.ls-sig   { font-size: 9px; opacity: .75; letter-spacing: 1.5px; }
 
 .ls-mid {
   flex: 1;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 6px 20px 8px; gap: 12px;
+  padding: 20px 20px 20px; gap: 18px;
 }
 .ls-logo-bg {
   background: rgba(255,255,255,.12);
-  border-radius: 12px; padding: 6px 14px;
-  display: flex; align-items: center;
+  border-radius: 14px; padding: 10px 20px;
+  display: flex; align-items: center; min-height: 60px;
 }
-#c-logo { max-height: 34px; max-width: 110px; object-fit: contain; display: block; }
+#c-logo { max-height: 44px; max-width: 130px; object-fit: contain; display: block; }
 
-.ls-text { text-align: center; display: flex; flex-direction: column; gap: 3px; }
-#c-name  { font-size: 22px; font-weight: 700; letter-spacing: -.04em; line-height: 1.12; }
-#c-job   { font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
-#c-co    { font-size: 12px; opacity: .85; }
+.ls-text { text-align: center; display: flex; flex-direction: column; gap: 5px; }
+#c-name  { font-size: 24px; font-weight: 700; letter-spacing: -.04em; line-height: 1.12; }
+#c-job   { font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
 
-.ls-qr   { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.ls-qr   { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .qr-bg   { background: #fff; border-radius: 10px; padding: 7px; }
 #qr-box  { width: 108px; height: 108px; display: flex; align-items: center; justify-content: center; }
-#qr-box canvas, #qr-box img { display: block !important; }
+#qr-box canvas { display: block !important; }
 .qr-ph   { font-size: 9px; color: #bbb; text-align: center; line-height: 1.5; }
 #qr-lbl  { font-size: 9px; font-weight: 500; letter-spacing: .03em; }
-
-.ls-bot  { display: flex; justify-content: center; padding: 8px 0 12px; flex-shrink: 0; }
-.ls-pill { width: 88px; height: 4px; border-radius: 2px; opacity: .32; }
 
 /* ── Responsive ── */
 @media (max-width: 660px) {
@@ -298,10 +292,6 @@ html, body {
         <input id="i-job" type="text" placeholder="Sales Manager" autocomplete="off" />
       </div>
       <div class="field">
-        <span>Company</span>
-        <input id="i-co" type="text" placeholder="SMAUT Technology" autocomplete="off" />
-      </div>
-      <div class="field">
         <span>LinkedIn URL</span>
         <input id="i-li" type="url" placeholder="https://linkedin.com/in/username" autocomplete="off" />
       </div>
@@ -320,12 +310,17 @@ html, body {
     <div class="group">
       <div class="glabel">Background</div>
       <div class="swatches" id="sw"></div>
-      <div id="t-lbl">Midnight</div>
+      <div id="t-lbl">SMAUT</div>
     </div>
 
   </div>
   <div class="s-foot">
-    <button id="dl" onclick="doDownload()">&#8595;&nbsp;&nbsp;Download Lock Screen</button>
+    <button id="dl" onclick="doDownload()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M8 1v9M4.5 6.5 8 10l3.5-3.5M2 13h12" stroke="#1A1917" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Save as Lock Screen Image
+    </button>
   </div>
 </aside>
 
@@ -335,10 +330,6 @@ html, body {
     <div class="p-island"></div>
     <div class="p-screen">
       <div id="ls">
-        <div class="ls-top" id="ls-top">
-          <span class="ls-clock">9:41</span>
-          <span class="ls-sig">&#9646;&#9646;&#9646;&thinsp;&#9673;&thinsp;&#9644;&#9644;&#9644;</span>
-        </div>
         <div class="ls-mid">
           <div class="ls-logo-bg" id="ls-lb" style="display:none">
             <img id="c-logo" src="" alt="logo" />
@@ -346,7 +337,6 @@ html, body {
           <div class="ls-text">
             <div id="c-name">Your Name</div>
             <div id="c-job">Job Title</div>
-            <div id="c-co">Company Name</div>
           </div>
           <div class="ls-qr">
             <div class="qr-bg">
@@ -357,9 +347,6 @@ html, body {
             <div id="qr-lbl">Scan to connect on LinkedIn</div>
           </div>
         </div>
-        <div class="ls-bot">
-          <div class="ls-pill" id="ls-pill"></div>
-        </div>
       </div>
     </div>
   </div>
@@ -368,25 +355,23 @@ html, body {
 
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
-  integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSi2M8hV8APm7aXmKkPMEZiXHEV+x3I+PKsw=="
-  crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
-  integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
-  crossorigin="anonymous"></script>
+<!-- qrcode (npm package via jsDelivr — reliable, no SRI issues) -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
 
+/* ── Themes — SMAUT + SNT first, then generics ── */
 const THEMES = [
-  { id:'mid', name:'Midnight', bg:'linear-gradient(160deg,#0f0c29,#302b63,#24243e)', c:'#fff', a:'#a78bfa', s:'#94a3b8' },
-  { id:'sea', name:'Ocean',    bg:'linear-gradient(160deg,#0c1445,#1565c0,#0d47a1)', c:'#fff', a:'#7dd3fc', s:'#93c5fd' },
-  { id:'fst', name:'Forest',   bg:'linear-gradient(160deg,#052e16,#166534,#14532d)', c:'#fff', a:'#86efac', s:'#a7f3d0' },
-  { id:'emb', name:'Ember',    bg:'linear-gradient(160deg,#1c0605,#7f1d1d,#991b1b)', c:'#fff', a:'#fca5a5', s:'#fcd34d' },
-  { id:'slt', name:'Slate',    bg:'linear-gradient(160deg,#0f172a,#1e293b,#334155)', c:'#fff', a:'#94a3b8', s:'#cbd5e1' },
-  { id:'prl', name:'Pearl',    bg:'linear-gradient(160deg,#f8fafc,#e2e8f0,#f1f5f9)', c:'#0f172a', a:'#3b82f6', s:'#475569' },
+  { id:'smaut', name:'SMAUT',   bg:'linear-gradient(160deg,#1A1917,#2D2927,#3A4B40)', c:'#EAE6DF', a:'#5EDA9B', s:'#88E4B6' },
+  { id:'snt',   name:'SNT',     bg:'linear-gradient(160deg,#111110,#343432,#1f1f1e)', c:'#ffffff', a:'#7cc400', s:'#a8d830' },
+  { id:'mid',   name:'Midnight',bg:'linear-gradient(160deg,#0f0c29,#302b63,#24243e)', c:'#ffffff', a:'#a78bfa', s:'#94a3b8' },
+  { id:'emb',   name:'Ember',   bg:'linear-gradient(160deg,#1c0605,#7f1d1d,#991b1b)', c:'#ffffff', a:'#fca5a5', s:'#fcd34d' },
+  { id:'slt',   name:'Slate',   bg:'linear-gradient(160deg,#0f172a,#1e293b,#334155)', c:'#ffffff', a:'#94a3b8', s:'#cbd5e1' },
+  { id:'prl',   name:'Pearl',   bg:'linear-gradient(160deg,#f8fafc,#e8eae6,#f1f5f9)', c:'#2D2927', a:'#3A4B40', s:'#555960' },
 ]
 let cur = THEMES[0], qrtmr = null
 
-const sw = document.getElementById('sw')
+const swrap = document.getElementById('sw')
 THEMES.forEach((t, i) => {
   const b = document.createElement('button')
   b.className = 'sw' + (i === 0 ? ' on' : '')
@@ -399,73 +384,79 @@ THEMES.forEach((t, i) => {
     document.getElementById('t-lbl').textContent = t.name
     paint()
   })
-  sw.appendChild(b)
+  swrap.appendChild(b)
 })
 
 function paint() {
-  document.getElementById('ls').style.background   = cur.bg
-  document.getElementById('ls-top').style.color    = cur.c
-  document.getElementById('c-name').style.color    = cur.c
-  document.getElementById('c-job').style.color     = cur.a
-  document.getElementById('c-co').style.color      = cur.s
-  document.getElementById('qr-lbl').style.color    = cur.s
-  document.getElementById('ls-pill').style.background = cur.c
+  document.getElementById('ls').style.background = cur.bg
+  document.getElementById('c-name').style.color  = cur.c
+  document.getElementById('c-job').style.color   = cur.a
+  document.getElementById('qr-lbl').style.color  = cur.s
 }
 
-/* inputs */
+/* ── Text inputs ── */
 document.getElementById('i-name').addEventListener('input', e => {
   document.getElementById('c-name').textContent = e.target.value || 'Your Name'
 })
 document.getElementById('i-job').addEventListener('input', e => {
   document.getElementById('c-job').textContent = e.target.value || 'Job Title'
 })
-document.getElementById('i-co').addEventListener('input', e => {
-  document.getElementById('c-co').textContent = e.target.value || 'Company Name'
-})
 document.getElementById('i-li').addEventListener('input', e => {
   clearTimeout(qrtmr)
   qrtmr = setTimeout(() => buildQR(e.target.value.trim()), 550)
 })
 
-/* QR */
+/* ── QR — uses qrcode npm package (QRCode.toCanvas) ── */
 function buildQR(url) {
   const box = document.getElementById('qr-box')
   box.innerHTML = ''
-  if (!url) { box.innerHTML = '<div class="qr-ph">Enter<br>LinkedIn URL</div>'; return }
-  new QRCode(box, {
-    text: url,
-    width: 108, height: 108,
-    colorDark: '#000000', colorLight: '#ffffff',
-    correctLevel: QRCode.CorrectLevel.M,
+  if (!url) {
+    box.innerHTML = '<div class="qr-ph">Enter<br>LinkedIn URL</div>'
+    return
+  }
+  const canvas = document.createElement('canvas')
+  box.appendChild(canvas)
+  QRCode.toCanvas(canvas, url, {
+    width: 108,
+    margin: 1,
+    color: { dark: '#000000', light: '#ffffff' },
+  }, function(err) {
+    if (err) {
+      box.innerHTML = '<div class="qr-ph">QR error</div>'
+      console.error(err)
+    }
   })
 }
 
-/* logo */
+/* ── Logo ── */
 document.getElementById('logo-file').addEventListener('change', e => {
   const f = e.target.files[0]; if (!f) return
   const rd = new FileReader()
   rd.onload = ev => {
     const src = ev.target.result
-    document.getElementById('logo-prev').src = src; document.getElementById('logo-prev').style.display = 'block'
-    document.getElementById('logo-txt').style.display = 'none'
-    document.getElementById('logo-rm').style.display  = 'block'
+    document.getElementById('logo-prev').src = src
+    document.getElementById('logo-prev').style.display = 'block'
+    document.getElementById('logo-txt').style.display  = 'none'
+    document.getElementById('logo-rm').style.display   = 'block'
     document.getElementById('c-logo').src = src
     document.getElementById('ls-lb').style.display = 'flex'
   }
   rd.readAsDataURL(f)
 })
 function rmLogo() {
-  document.getElementById('logo-prev').src = ''; document.getElementById('logo-prev').style.display='none'
-  document.getElementById('logo-txt').style.display='block'
-  document.getElementById('logo-rm').style.display='none'
-  document.getElementById('logo-file').value=''
-  document.getElementById('ls-lb').style.display='none'
+  document.getElementById('logo-prev').src = ''
+  document.getElementById('logo-prev').style.display = 'none'
+  document.getElementById('logo-txt').style.display  = 'block'
+  document.getElementById('logo-rm').style.display   = 'none'
+  document.getElementById('logo-file').value = ''
+  document.getElementById('ls-lb').style.display = 'none'
 }
 
-/* download */
+/* ── Download ── */
 async function doDownload() {
   const btn = document.getElementById('dl')
-  btn.disabled = true; btn.textContent = 'Generating…'
+  btn.disabled = true
+  btn.innerHTML = 'Generating&hellip;'
   try {
     const el = document.getElementById('ls')
     const canvas = await html2canvas(el, {
@@ -481,7 +472,8 @@ async function doDownload() {
     console.error(err)
     alert('Export failed. Please try again.')
   } finally {
-    btn.disabled = false; btn.innerHTML = '&#8595;&nbsp;&nbsp;Download Lock Screen'
+    btn.disabled = false
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M4.5 6.5 8 10l3.5-3.5M2 13h12" stroke="#1A1917" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Save as Lock Screen Image'
   }
 }
 
