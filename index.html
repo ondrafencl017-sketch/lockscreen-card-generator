@@ -238,11 +238,9 @@ html, body {
   padding: 20px 20px 20px; gap: 18px;
 }
 .ls-logo-bg {
-  background: rgba(255,255,255,.12);
-  border-radius: 14px; padding: 10px 20px;
-  display: flex; align-items: center; min-height: 60px;
+  display: flex; align-items: center; justify-content: center;
 }
-#c-logo { max-height: 44px; max-width: 130px; object-fit: contain; display: block; }
+#c-logo { max-height: 80px; max-width: 180px; object-fit: contain; display: block; }
 
 .ls-text { text-align: center; display: flex; flex-direction: column; gap: 5px; }
 #c-name  { font-size: 24px; font-weight: 700; letter-spacing: -.04em; line-height: 1.12; }
@@ -305,6 +303,10 @@ html, body {
         <span id="logo-txt">Click to upload logo</span>
       </div>
       <button id="logo-rm" onclick="rmLogo()">Remove logo</button>
+      <label id="logo-white-wrap" style="display:none;align-items:center;gap:8px;cursor:pointer;font-size:11px;color:var(--muted)">
+        <input type="checkbox" id="logo-white" onchange="toggleLogoWhite(this.checked)" style="accent-color:var(--accent);width:14px;height:14px;cursor:pointer">
+        Show white version
+      </label>
     </div>
 
     <div class="group">
@@ -355,8 +357,6 @@ html, body {
 
 </div>
 
-<!-- qrcode (npm package via jsDelivr — reliable, no SRI issues) -->
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
 
@@ -406,7 +406,7 @@ document.getElementById('i-li').addEventListener('input', e => {
   qrtmr = setTimeout(() => buildQR(e.target.value.trim()), 550)
 })
 
-/* ── QR — uses qrcode npm package (QRCode.toCanvas) ── */
+/* ── QR — image from qrserver.com (no library dependency) ── */
 function buildQR(url) {
   const box = document.getElementById('qr-box')
   box.innerHTML = ''
@@ -414,18 +414,12 @@ function buildQR(url) {
     box.innerHTML = '<div class="qr-ph">Enter<br>LinkedIn URL</div>'
     return
   }
-  const canvas = document.createElement('canvas')
-  box.appendChild(canvas)
-  QRCode.toCanvas(canvas, url, {
-    width: 108,
-    margin: 1,
-    color: { dark: '#000000', light: '#ffffff' },
-  }, function(err) {
-    if (err) {
-      box.innerHTML = '<div class="qr-ph">QR error</div>'
-      console.error(err)
-    }
-  })
+  const img = new Image()
+  img.crossOrigin = 'anonymous'
+  img.style.cssText = 'display:block;width:108px;height:108px'
+  img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=216x216&data=' + encodeURIComponent(url) + '&format=png&margin=4'
+  img.onerror = () => { box.innerHTML = '<div class="qr-ph">QR error</div>' }
+  box.appendChild(img)
 }
 
 /* ── Logo ── */
@@ -438,6 +432,7 @@ document.getElementById('logo-file').addEventListener('change', e => {
     document.getElementById('logo-prev').style.display = 'block'
     document.getElementById('logo-txt').style.display  = 'none'
     document.getElementById('logo-rm').style.display   = 'block'
+    document.getElementById('logo-white-wrap').style.display = 'flex'
     document.getElementById('c-logo').src = src
     document.getElementById('ls-lb').style.display = 'flex'
   }
@@ -450,6 +445,12 @@ function rmLogo() {
   document.getElementById('logo-rm').style.display   = 'none'
   document.getElementById('logo-file').value = ''
   document.getElementById('ls-lb').style.display = 'none'
+  document.getElementById('logo-white-wrap').style.display = 'none'
+  document.getElementById('logo-white').checked = false
+  document.getElementById('c-logo').style.filter = ''
+}
+function toggleLogoWhite(on) {
+  document.getElementById('c-logo').style.filter = on ? 'brightness(0) invert(1)' : ''
 }
 
 /* ── Download ── */
